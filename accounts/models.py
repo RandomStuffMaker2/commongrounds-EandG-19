@@ -13,5 +13,8 @@ class Profile(models.Model):
     displayName = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
 
+    def __str__(self):
+        return self.displayName
+
     def get_absolute_url(self):
         return reverse('accounts:profileupdate', kwargs={'displayName': self.displayName})

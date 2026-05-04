@@ -23,6 +23,19 @@
         <a href="/diyprojects/projects">DIY Projects</a>
         <a href="/commissions/requests">Commissions</a>
     </nav>
-    {% block content %}{% endblock %}
+    {% block content %}{% endblock %}\
+    {% if user.is_authenticated %}
+		<form method="POST" action="{% url 'logout' %}">
+		    {% csrf_token %}
+			{{ form.as_p }}
+		    <button type="submit">Logout</button>
+		</form>
+	{% else %}
+		<form method="POST" action="{% url 'login' %}">
+			{% csrf_token %}
+			{{ form.as_p }}
+			<button type="submit">Login</button>
+		</form>
+	{% endif %}
 </body>
 </html>
