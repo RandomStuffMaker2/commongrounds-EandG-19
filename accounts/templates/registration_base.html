@@ -1,10 +1,9 @@
-{% block content %}
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Common Grounds{% endblock %}</title>
+    <title>{% block title %}Common Grounds Registration{% endblock %}</title>
     <style>
         body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
         nav { background: #333; padding: 10px; margin-bottom: 20px; border-radius: 5px; }
@@ -24,27 +23,9 @@
         <a href="/diyprojects/projects">DIY Projects</a>
         <a href="/commissions/requests">Commissions</a>
     </nav>
-
-<h1>{{ product.name }}</h1>
-
-<ul> Product Type: {{ product.productType.name }} </ul>
-<ul> Description: {{ product.description }} </ul>
-<ul> Price: {{ product.price }} </ul>
-<ul> Stock: {{ product.stock }} </ul>
-<ul> Status: {{ product.status }} </ul>
-
-<ul> {% if user.is_authenticated %}
-		<form method="POST" action="{% url 'merchstore:cart' %}">
-		    {% csrf_token %}
-			{{ form.as_p }}
-		    <button type="submit">Buy</button>
-		</form>
-	{% else %}
-		<form method="POST" action="{% url 'login' %}">
-			{% csrf_token %}
-			{{ form.as_p }}
-			<button type="submit">Buy</button>
-		</form>
-	{% endif %}</ul>
-
-{% endblock %}
+    <header>
+        <h1>Common Grounds</h1>
+        {% block heading %}{% endblock %}
+    </header>
+    {% block content %}{% endblock %}
+</body>

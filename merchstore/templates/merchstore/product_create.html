@@ -25,26 +25,13 @@
         <a href="/commissions/requests">Commissions</a>
     </nav>
 
-<h1>{{ product.name }}</h1>
+<h1>Add Product</h1>
 
-<ul> Product Type: {{ product.productType.name }} </ul>
-<ul> Description: {{ product.description }} </ul>
-<ul> Price: {{ product.price }} </ul>
-<ul> Stock: {{ product.stock }} </ul>
-<ul> Status: {{ product.status }} </ul>
 
-<ul> {% if user.is_authenticated %}
-		<form method="POST" action="{% url 'merchstore:cart' %}">
+<form method="POST" action="{% url 'merchstore:add' %}">
 		    {% csrf_token %}
 			{{ form.as_p }}
-		    <button type="submit">Buy</button>
-		</form>
-	{% else %}
-		<form method="POST" action="{% url 'login' %}">
-			{% csrf_token %}
-			{{ form.as_p }}
-			<button type="submit">Buy</button>
-		</form>
-	{% endif %}</ul>
+		    <button type="submit">Create</button>
+</form>
 
 {% endblock %}

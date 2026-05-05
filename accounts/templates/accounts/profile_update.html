@@ -1,0 +1,12 @@
+{% extends 'registration_base.html' %}
+{% block title %}Change Username{% endblock %}
+{% block heading %}
+	<h2>Change Username</h2>
+{% endblock %}
+{% block content %}
+	<form method ="POST" enctype="multipart/form-data">
+		{% csrf_token %}
+		{{ profileform }}
+		<input type="submit" value="Submit">
+	</form>
+{% endblock %}
