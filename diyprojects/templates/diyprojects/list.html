@@ -4,12 +4,50 @@
 
 {% block content %}
 <h1>DIY Projects</h1>
-{% for project in projects %}
-<div class="card">
-    <h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
-    <p><strong>Category:</strong> {{ project.category|default:"N/A" }}</p>
-</div>
-{% empty %}
-<p>No events available.</p>
-{% endfor %}
+{% if user.is_authenticated %}
+	<h2>Created Projects</h2>
+	{% for project in createdProjects %}
+		<div class="card">
+    		<h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+    		<p><strong>Category:</strong> {{ project.category|default:"N/A" }}</p>
+			<p><strong>Creator:</strong> {{ project.creator.displayName|default:"N/A" }}</p>
+		</div>
+		{% empty %}
+		<p>No created projects.</p>
+	{% endfor %}
+	<h2>Favorite Projects</h2>
+	{% for project in favProjects %}
+		{% if project not in createdProjects %}
+			<div class="card">
+    			<h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+    			<p><strong>Category:</strong> {{ project.category|default:"N/A" }}</p>
+				<p><strong>Creator:</strong> {{ project.creator.displayName|default:"N/A" }}</p>
+			</div>
+		{% endif %}
+		{% empty %}
+		<p>No favorite projects.</p>
+	{% endfor %}
+	<h2>Browse Projects</h2>
+	{% for project in projects %}
+			{% if project not in createdProjects and project not in favProjects %}
+				<div class="card">
+					<h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+					<p><strong>Category:</strong> {{ project.category|default:"N/A" }}</p>
+					<p><strong>Creator:</strong> {{ project.creator.displayName|default:"N/A" }}</p>
+				</div>
+			{% endif %}
+		{% empty %}
+		<p>No projects available.</p>
+	{% endfor %}
+{% else %} 
+	{% for project in projects %}
+		<div class="card">
+    	<h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+    	<p><strong>Category:</strong> {{ project.category|default:"N/A" }}</p>
+		<p><strong>Creator:</strong> {{ project.creator.displayName|default:"N/A" }}</p>
+		</div>
+		{% empty %}
+		<p>No projects available.</p>
+	{% endfor %}
+{% endif %}
 {% endblock %}
