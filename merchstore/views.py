@@ -21,6 +21,17 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     context_object_name = 'product_create'
     # success_url = 'merchstore/product_list.html'
 
+    #this subclass is how owner is autofilled
+    def form_valid(self, form):
+        form.instance.owner = self.request.user.profile
+        return super().form_valid(form)
+
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'merchstore/product_update.html'
+    context_object_name = 'product_update'
+
 #this subclass is how owner is autofilled
     def form_valid(self, form):
         form.instance.owner = self.request.user.profile
@@ -37,10 +48,21 @@ class ProductDetailView(DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
         form = TransactionForm(request.POST)
+        
+        #this long stretch of code basically makes the object without commiting it to the database
+        #only after product and buyer are defined by the view manually does it come in
+        #hence why commit=false is used
+        #it crashed if I didn't put it in so idk if there are any alternatives
         if form.is_valid():
-            form.save()
-            return self.get(request, *args, **kwargs)
+            transaction = form.save(commit=False)
+            transaction.product = self.object
+            transaction.buyer = request.user.profile
+            transaction.save()
+            self.object.stock -= transaction.amount
+            self.object.save()
+            return redirect('merchstore:cart')
         else:
             self.object_list = self.get_queryset(**kwargs)
             context = self.get_context_data(**kwargs)
@@ -57,3 +79,14 @@ class CartListView(LoginRequiredMixin, ListView):
     
     def post(self, request, *args, **kwargs):
         return redirect('merchstore:cart')
+    
+class TransactionListView(LoginRequiredMixin, ListView):
+    model = Transaction
+    template_name = 'merchstore/transactions.html'
+    context_object_name = 'transactions'
+
+    def get_queryset(self):
+        return Transaction.objects.filter(product__owner=self.request.user.profile)
+    
+    def post(self, request, *args, **kwargs):
+        return redirect('merchstore:transactions')

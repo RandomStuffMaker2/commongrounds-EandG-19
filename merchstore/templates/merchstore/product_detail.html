@@ -27,24 +27,40 @@
 
 <h1>{{ product.name }}</h1>
 
+
+<img src="{{ product.image.url }}" alt="" style="width: 300px;">
+
+
 <ul> Product Type: {{ product.productType.name }} </ul>
+<ul> Owner: {{ product.owner.displayName }} </ul>
 <ul> Description: {{ product.description }} </ul>
 <ul> Price: {{ product.price }} </ul>
 <ul> Stock: {{ product.stock }} </ul>
 <ul> Status: {{ product.status }} </ul>
 
 <ul> {% if user.is_authenticated %}
-		<form method="POST" action="{% url 'merchstore:cart' %}">
+		<form method="POST" action="{{ product.get_absolute_url }}">
 		    {% csrf_token %}
 			{{ form.as_p }}
-		    <button type="submit">Buy</button>
+		    <button type="submit"{% if product.owner == user.profile or product.stock == 0 %}
+            disabled
+            {% endif %}>Buy</button>
 		</form>
 	{% else %}
 		<form method="POST" action="{% url 'login' %}">
 			{% csrf_token %}
 			{{ form.as_p }}
-			<button type="submit">Buy</button>
+            >Buy</button>
 		</form>
 	{% endif %}</ul>
 
+{% if user.is_authenticated and user.profile.role == "Market Seller" %}
+    <a href="{% url 'merchstore:update' pk=product.pk %}" class="btn">Update Product</a>
+{% endif %}
+
 {% endblock %}
+			<!-- <button type="submit"
+            {% if product.owner == user.profile or product.stock == 0 %} 
+                disabled 
+                style="background-color: gray; cursor: Unclickable;"
+            {% endif %}> -->

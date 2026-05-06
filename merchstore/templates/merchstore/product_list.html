@@ -2,19 +2,32 @@
 {% load static %}
 {% block content %}
 
-<h1>Product List</h1>
+<h1>Your Cart</h1>
 
-<ul>
 
+<h2>User Products</h2>
 {% for product in products %}
+{% if user.profile == product.owner %}
     <li>
         <a href="{% url 'merchstore:product-detail' product.pk %}">
             {{ product.name }}
         </a>
     </li>
+    {% endif %}
     {% endfor %}
 </ul> 
 
+<h2>All Products</h2>
+{% for product in products %}
+{% if user.profile != product.owner %}
+    <li>
+        <a href="{% url 'merchstore:product-detail' product.pk %}">
+            {{ product.name }}
+        </a>
+    </li>
+    {% endif %}
+    {% endfor %}
+<ul></ul>
 {% if user.is_authenticated and user.profile.role == "Market Seller" %}
     <a href="{% url 'merchstore:add' %}" class="btn">Create Product</a>
 {% endif %}

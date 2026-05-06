@@ -31,6 +31,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE,
                               related_name='product')
+    image = models.ImageField(upload_to='images/', null=True)
     productType = models.ForeignKey(ProductType, on_delete=models.SET_NULL,
                                     null=True,
                                     related_name='product')
