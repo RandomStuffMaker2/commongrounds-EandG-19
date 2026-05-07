@@ -1,17 +1,67 @@
-<!DOCTYPE html>
-<html lang="en-US">
-<head>
-	<title>DIY Projects</title>
-</head>
-<body>
-	<header>
-		<h1>DIY Projects</h1>
-		<h2>Projects List</h2>
-	</header>
-	<ul>
-	  {% for project in projects %}
-	    <li> <a href="{{ project.get_absolute_url }}">{{ project.title }}</a></li>
-	  {% endfor %}
-	</ul>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}DIY Projects{% endblock %}
+
+{% block content %}
+<h1>DIY Projects</h1>
+{% if user.is_authenticated %}
+	<h2>Created Projects</h2>
+	{% for project in createdProjects %}
+		<div class="card">
+    		<h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+    		<p><strong>Category:</strong> {{ project.category|default:"N/A" }}</p>
+			<p><strong>Favorite? </strong>{% if project in favProjects %}✓{% else %}X{% endif %}</p>
+		</div>
+		{% empty %}
+		<p>No created projects.</p>
+	{% endfor %}
+	<h2>Favorite Projects</h2>
+	{% for project in favProjects %}
+		{% if project not in createdProjects %}
+			<div class="card">
+    			<h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+				<h4><strong>Created by </strong> {{ project.creator.displayName|default:"N/A" }}</h4>
+    			<p><strong>Category:</strong> {{ project.category|default:"N/A" }}</p>
+				<p><strong>Reviewed? </strong>{% if project in revProjects %}✓{% else %}X{% endif %}</p>
+			</div>
+		{% endif %}
+		{% empty %}
+		<p>No favorite projects.</p>
+	{% endfor %}
+	<h2>Reviewed Projects</h2>
+	{% for project in revProjects %}
+		{% if project not in createdProjects and project not in favProjects %}
+			<div class="card">
+				<h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+				<h4><strong>Created by:</strong> {{ project.creator.displayName|default:"N/A" }}</h4>
+				<p><strong>Category:</strong> {{ project.category|default:"N/A" }}</p>
+				<p><strong>Favorite? </strong>{% if project in favProjects %}✓{% else %}X{% endif %}</p>
+			</div>
+		{% endif %}
+		{% empty %}
+		<p>No reviewed projects.</p>
+	{% endfor %}
+	<h2>Browse Projects</h2>
+	{% for project in projects %}
+		{% if project not in createdProjects and project not in favProjects and project not in revProjects %}
+			<div class="card">
+				<h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+				<p><strong>Category:</strong> {{ project.category|default:"N/A" }}</p>
+				<p><strong>Creator:</strong> {{ project.creator.displayName|default:"N/A" }}</p>
+			</div>
+		{% endif %}
+		{% empty %}
+		<p>No projects available.</p>
+	{% endfor %}
+{% else %} 
+	{% for project in projects %}
+		<div class="card">
+    	<h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+    	<p><strong>Category:</strong> {{ project.category|default:"N/A" }}</p>
+		<p><strong>Creator:</strong> {{ project.creator.displayName|default:"N/A" }}</p>
+		</div>
+		{% empty %}
+		<p>No projects available.</p>
+	{% endfor %}
+{% endif %}
+{% endblock %}

@@ -1,5 +1,7 @@
 from django.db import models
 from django.urls import reverse
+from django.core.validators import MaxValueValidator, MinValueValidator
+
 # Create your models here.
 
 class ProjectCategory(models.Model):
@@ -20,6 +22,11 @@ class Project(models.Model):
         on_delete=models.SET_NULL,
         related_name='project',
         null=True)
+    creator = models.ForeignKey(
+        'accounts.Profile',
+        on_delete=models.SET_NULL,
+        related_name='projects',
+        null=True)
     description = models.TextField(blank=True)
     materials = models.TextField(blank=True)
     steps = models.TextField(blank=True)
@@ -35,3 +42,59 @@ class Project(models.Model):
     class Meta:
         ordering = ['-created_On']
         app_label = 'diyprojects'
+
+class Favorite(models.Model):
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='profile'
+    )
+    profile = models.ForeignKey(
+        'accounts.Profile',
+        on_delete=models.CASCADE,
+        related_name='fav_projects'
+    )
+    date_Favorited = models.DateField(auto_now_add=True)
+    PROJECT_STATUS_CHOICES = {
+        'SL': 'Select',
+        'BL': 'Backlog',
+        'TD': 'To-Do',
+        'DO': 'Done'
+    }
+    project_Status = models.CharField(
+        max_length=2,
+        choices=PROJECT_STATUS_CHOICES,
+        default='SL'
+    )
+
+class ProjectReview(models.Model):
+    reviewer = models.ForeignKey(
+        'accounts.Profile',
+        on_delete=models.CASCADE,
+        related_name='rev_projects'
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='reviewer'
+    )
+    comment = models.TextField(blank=True)
+    review_Image = models.ImageField(upload_to='images/diyprojects/', null=True)
+
+class ProjectRating(models.Model):
+    rater = models.ForeignKey(
+        'accounts.Profile',
+        on_delete=models.CASCADE,
+        related_name='rate_projects'
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='rater'
+    )
+    score = models.IntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10)
+        ]
+    )
