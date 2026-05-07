@@ -17,7 +17,7 @@ def book_list(request):
         bookmarked = Book.objects.filter(bookmarks__profile=profile)
         reviewed = Book.objects.filter(reviews__user_reviewer=profile)
 
-        user_book_ids= (
+        user_book_ids = (
             contributed | bookmarked | reviewed 
         ).values_list("id", flat=True)
         all_books = all_books.exclude(id__in=user_book_ids)
@@ -41,7 +41,9 @@ def book_detail(request, pk):
     review_form = BookFormFactory.get_form("review", reviewer_name=reviewer_name)
 
     if request.method == "POST" and "submit_review" in request.POST:
-        review_form = BookFormFactory.get_form("review", data=request.POST, reviewer_name=reviewer_name)
+        review_form = BookFormFactory.get_form("review", 
+                                               data=request.POST, 
+                                               reviewer_name=reviewer_name)
         if review_form.is_valid():
             new_review = review_form.save(commit=False)
             new_review.book = book
@@ -59,7 +61,8 @@ def book_detail(request, pk):
                 Bookmark.objects.create(profile=profile, book=book)
         return redirect("bookclub:book_detail", pk=pk)
         
-    is_bookmarked = profile and Bookmark.objects.filter(profile=profile, book=book).exists()
+    is_bookmarked = profile and Bookmark.objects.filter(profile=profile, 
+                                                        book=book).exists()
     is_contributor = profile and book.contributor == profile
 
     context = {
@@ -83,18 +86,21 @@ def book_create(request):
             book.contributor = request.user.profile
             book.save()
             return redirect("bookclub:book_detail", pk=book.pk)
-    return render(request, "bookclub/book_form.html", {"form": form, "action": "Add"})
+    return render(request, "bookclub/book_form.html", {"form": form, 
+                                                       "action": "Add"})
 
 @login_required
 def book_update(request, pk):
     book = get_object_or_404(Book, pk=pk)
     form = BookFormFactory.get_form("update", instance=book)
     if request.method == "POST":
-        form = BookFormFactory.get_form("update", data=request.POST, instance=book)
+        form = BookFormFactory.get_form("update", data=request.POST, 
+                                        instance=book)
         if form.is_valid():
             book = form.save()
             return redirect("bookclub:book_detail", pk=book.pk)
-    return render(request, "bookclub/book_form.html", {"form": form, "action": "Edit"})
+    return render(request, "bookclub/book_form.html", {"form": form, 
+                                                       "action": "Edit"})
 
 def book_borrow(request, pk):
     book = get_object_or_404(Book, pk=pk)
@@ -117,4 +123,5 @@ def book_borrow(request, pk):
             book.save()
             
             return redirect("bookclub:book_detail", pk=pk)
-    return render(request, "bookclub/book_borrow.html", {"book": book, "form": form})
+    return render(request, "bookclub/book_borrow.html", {"book": book, 
+                                                         "form": form})

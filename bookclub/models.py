@@ -13,6 +13,7 @@ class Genre(models.Model):
     def __str__(self):
         return self.name
 
+
 class Book(models.Model):
     title = models.CharField(max_length=255)
 
@@ -56,8 +57,10 @@ class BookReview(models.Model):
         blank=True,
         related_name="reviews",
     )
-    anonymous_reviewer = models.CharField(max_length=255, blank=True, default="Anonymous")
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="reviews")
+    anonymous_reviewer = models.CharField(max_length=255, blank=True, 
+                                          default="Anonymous")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, 
+                             related_name="reviews")
     title = models.CharField(max_length=255)
     comment = models.TextField()
 
@@ -104,4 +107,3 @@ class Borrow(models.Model):
 
     def __str__(self):
         return f"{self.name} borrowed {self.book.title}"
-

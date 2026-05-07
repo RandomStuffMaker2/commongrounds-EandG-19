@@ -2,6 +2,7 @@ import datetime
 from django import forms
 from .models import Book, BookReview, Borrow
 
+
 class BookReviewForm(forms.ModelForm):
 
     class Meta:
@@ -16,6 +17,7 @@ class BookReviewForm(forms.ModelForm):
             self.fields["anonymous_reviewer"].widget.attrs["readonly"] = True
             self.fields["anonymous_reviewer"].label = "Name"
     
+
 class BookContributeForm(forms.ModelForm):
     
     class Meta:
@@ -23,12 +25,14 @@ class BookContributeForm(forms.ModelForm):
         fields = ["title", "genre", "author", "synopsis", "publication_year", "available_to_borrow"]
         widgets = {"genre": forms.Select()}
 
+
 class BookUpdateForm(forms.ModelForm):
     
     class Meta:
         model = Book
         fields = ["title", "genre", "author", "synopsis", "publication_year", "available_to_borrow"]
         widgets = {"genre": forms.Select()}
+
 
 class BorrowForm(forms.ModelForm):
 
@@ -45,6 +49,7 @@ class BorrowForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
 
 class BookFormFactory:
     @classmethod
