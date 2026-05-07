@@ -35,6 +35,9 @@ def project_detail(request, id):
         currentProfile = currentUser.profile
         ratProjects = Project.objects.filter(rater__rater=currentProfile)
         favProjects = Project.objects.filter(profile__profile=currentProfile)
+        currentFave = Favorite()
+        if favProjects.contains(project):
+            currentFave = favorites.get(profile=currentProfile)
         revProjects = Project.objects.filter(reviewer__reviewer=currentProfile)
         rateForm = ProjectRatingForm()
         favForm = FavoriteForm()
@@ -62,11 +65,11 @@ def project_detail(request, id):
                     fave.profile = currentProfile
                     fave.save()
             elif 'changeStat' in request.POST:
-                favForm = FavoriteForm(request.POST, instance = favorites.get(profile=currentProfile))
+                favForm = FavoriteForm(request.POST, instance = currentFave)
                 if favForm.is_valid():
                     fave = favForm.save()
             elif 'removeFave' in request.POST:
-                faveToRemove = favorites.get(profile=currentProfile)
+                faveToRemove = currentFave
                 faveToRemove.delete()
             elif 'addRev' in request.POST:
                 revForm = ProjectReviewForm(request.POST, request.FILES)
@@ -84,7 +87,7 @@ def project_detail(request, id):
                 revToRemove.delete()
             return redirect('diyprojects:project_detail', id = project.pk)
         ctx = {
-            'project': project, 'avgRating': avgRating, 'ratings': ratings, 'ratProjects': ratProjects, 'rateForm': rateForm, 'favorites': favorites, 'favProjects':favProjects, 'favForm': favForm, 'reviews': reviews, 'revProjects': revProjects, 'revForm':revForm
+            'project': project, 'avgRating': avgRating, 'ratings': ratings, 'ratProjects': ratProjects, 'rateForm': rateForm, 'favorites': favorites, 'favProjects':favProjects, 'currentFave': currentFave, 'favForm': favForm, 'reviews': reviews, 'revProjects': revProjects, 'revForm':revForm
         }
     else:
         ctx = {

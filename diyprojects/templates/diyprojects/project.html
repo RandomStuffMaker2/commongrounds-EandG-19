@@ -4,6 +4,9 @@
 
 {% block content %}
 <h1>{{ project.title }}</h1>
+{% if project.creator == user.profile %}
+	<a href="{% url 'diyprojects:project_update' id=project.pk %}">Edit Project</a>
+{% endif %}
 <h3><strong>Created by </strong>{{project.creator.displayName}}</h3>
 <p><strong>Category:</strong> {{ project.category|default:"N/A" }}</p>
 <p><strong>Description:</strong> {{ project.description }}</p>
@@ -32,6 +35,7 @@
 	{% endif %}
 	<p><strong>Favorites: </strong> {{ favorites.count }}</p>
 	{% if project in favProjects %}
+		<p><strong>Current status:</strong> {{ currentFave.project_Status }}</p>
 		<form method ="POST">
 			{% csrf_token %}
 			{{ favForm }}
