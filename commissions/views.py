@@ -172,6 +172,7 @@ class CommissionUpdateView(LoginRequiredMixin, UpdateView):
             return self.form_invalid(form)
 
         commission = form.save(commit=False)
+        commission.maker = self.object.maker
         commission.save()
         job_formset.save()
         service.sync_commission_status(commission)
