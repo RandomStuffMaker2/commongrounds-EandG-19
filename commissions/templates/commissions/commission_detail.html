@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
 <h1>{{ commission.title }}</h1>
 
 <p>{{ commission.description }}</p>
@@ -42,3 +46,5 @@
 {% endfor %}
 
 <a href="{% url 'commissions:commission_list' %}">Back to Commissions</a>
+
+{% endblock %}
