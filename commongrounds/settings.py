@@ -31,7 +31,11 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = ["*"]
 
-CSRF_TRUSTED_ORIGINS = "https://commongrounds-eandg-19-production.up.railway.app"
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+]
 
 
 # Application definition
